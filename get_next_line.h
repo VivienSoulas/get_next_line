@@ -1,8 +1,8 @@
-#ifndef GET_NEXT_LIVE_H
+#ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
 
 # ifndef BUFFER_SIZE
-# define  BUFFER_SIZE 10
+#  define BUFFER_SIZE 10
 # endif
 
 # include <stdio.h>
@@ -17,7 +17,14 @@ typedef struct s_list
 }	t_list;
 
 char	*get_next_line(int fd);
-t_list	*ft_lstlast(t_list *lst);
-int		check_new_line(t_list *list);
+void	read_and_stash(t_list **stash, int fd);
+int		ft_found_new_line(t_list *stash);
+t_list	*ft_last_node(t_list *stash);
+void	ft_add_to_stash(t_list **stash, char *buffer, int bytesread);
+void	extract_line(t_list *stash, char **next_line);
+void	ft_generate_line(char **next_line, t_list *stash);
+void	clean_stash(t_list **stash);
+void	ft_fill_last_node(t_list **stash, int i, t_list *last);
+void	ft_free_stash(t_list *stash);
 
 #endif

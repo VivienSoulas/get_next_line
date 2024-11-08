@@ -1,133 +1,146 @@
 #include "get_next_line.h"
-// cc -Wall -Wextra -Werror -D BUFFER_SIZE=42 get_next_line.c
 
+// int	main(void)
+// {
+// 	int		fd;
+// 	char	*lineread;
 
-int	main(void)
+// 	fd = 0;
+// 	fd = open ("fearandloathinginlasvegas.txt", O_RDONLY);
+// 	if (fd < 0)
+// 		return (1);
+// 	// lineread = get_next_line(fd);
+// 	// printf("%s\n", lineread);
+// 	while ((lineread = get_next_line(fd)) != 0)
+// 	{
+// 		printf("%s\n", lineread);
+// 		free(lineread);
+// 	}
+// 	close(fd);
+// 	return (0);
+// }
+
+char	*get_next_line(int fd)
 {
-	int		fd;
-	// char	*lineread;
+	static t_list	*stash = NULL;
+	char			*line;
 
-	fd = 0;
-	fd = open ("fearandloathinginlasvegas.txt", O_RDONLY);
-	if (fd < 0)
-		return (1);
-	get_next_line(fd);
-	// while ((lineread = get_next_line(fd)) != 0)
-	// {
-	// 	printf("%s\n", lineread);
-	// 	free(lineread);
-	// }
-	close(fd);
-	return (0);
+	if (fd < 0 || BUFFER_SIZE <= 0)
+		return (NULL);
+	line = NULL;
+	read_and_stash(&stash, fd);
+	if (stash == NULL)
+		return (NULL);
+	extract_line(stash, &line);
+	clean_stash(&stash);
+	if (line && line[0] == '\0')
+	{
+		ft_free_stash(stash);
+		stash = NULL;
+		free(line);
+		return (NULL);
+	}
+	return (line);
 }
 
-// create a new node with the content = to buffer
-// place the new node at the end of the list
-void	join_node(t_list **list, char *buffer)
+// uses read() to add text to the stash
+void	read_and_stash(t_list **stash, int fd)
 {
-	t_list	*new_node;
-	t_list	*last_node;
-
-	new_node = malloc (sizeof(t_list));
-	if (!new_node)
-		return ;
-	new_node->content = buffer;
-	last_node = ft_lstlast(*list);
-	if (*list == NULL)
-		*list = new_node;
-	else
-		last_node->next = new_node;
-	new_node->next = NULL;
-}
-
-
-// create node in the list until we find a \n
-// when found we create a new node that we add at the end of the list
-// the node created has for content the buffer
-void	create_list(t_list **list, int fd)
-{
-	int		bytesread;
 	char	*buffer;
+	int		bytesread;
 
 	bytesread = 0;
-	while (!check_new_line(*list))
+	while (!ft_found_new_line(*stash))
 	{
-		buffer = malloc ((BUFFER_SIZE + 1) * sizeof(char));
-		if (!buffer)
+		buffer = malloc (sizeof(char) * (BUFFER_SIZE + 1));
+		if (buffer == NULL)
 			return ;
-		bytesread = read(fd, buffer, BUFFER_SIZE);
-		if (bytesread < 0)
+		bytesread = read (fd, buffer, BUFFER_SIZE);
+		if ((bytesread == 0) || bytesread < 0)
 		{
 			free(buffer);
 			return ;
 		}
 		buffer[bytesread] = '\0';
-		join_node(list, buffer);
+		ft_add_to_stash(stash, buffer, bytesread);
+		free(buffer);
 	}
-	return ;
 }
 
-char	*find_line(t_list *new_list)
+// add buffer to the end of stash
+void	ft_add_to_stash(t_list **stash, char *buffer, int bytesread)
 {
-	char	*next_line;
-	t_list	*current;
 	int		i;
-	int		k;
-	int		line_len;
+	t_list	*last;
+	t_list	*new_node;
 
-	current = new_list;
-	while (current)
+	new_node = malloc (sizeof(t_list));
+	if (new_node == NULL)
+		return ;
+	new_node->next = NULL;
+	new_node->content = malloc (sizeof(char) * (bytesread + 1));
+	if (new_node->content == NULL)
 	{
-		i = 0;
-		while (current->content[i] != '\n')
-		{
-			line_len++;
-			i++;
-			if (current->content[i] == '\n')
-				break ;
-
-		}
-		current = current->next;
+		free(new_node);
+		return ;
 	}
-	next_line = malloc ((line_len + 1) * sizeof(char));
-	if (!next_line)
-		return (NULL);
-	current = new_list;
-	k = 0;
-	while (current)
+	i = -1;
+	while (++i < bytesread && buffer[i])
+		new_node->content[i] = buffer[i];
+	new_node->content[i] = '\0';
+	if (*stash == NULL)
+		*stash = new_node;
+	else
 	{
-		i = 0;
-		while (current->content[i]) // seg fault
-		{
-			next_line[k] = current->content[i];
-			i++;
-			k++;
-			if (current->content[i] == '\n')
-			{
-				next_line[k] = current->content[i];
-				next_line[k + 1] = '\0';
-				return (next_line);
-			}
-			current = current->next;
-		}
+		last = ft_last_node(*stash);
+		last->next = new_node;
 	}
-	return (next_line);
 }
 
-
-char	*get_next_line(int fd)
+// extract the line from stash to new_line
+// stopping after the first \n
+void	extract_line(t_list *stash, char **next_line)
 {
-	static t_list	*new_list;
-	char			*next_line;
+	int	i;
+	int	j;
 
-	if (fd < 0 || BUFFER_SIZE == 0)
-		return (NULL);
-	new_list = NULL;
-	create_list(&new_list, fd);
-	if (new_list == NULL)
-		return (NULL);
+	ft_generate_line(next_line, stash);
+	if (*next_line == NULL)
+		return ;
+	j = 0;
+	while (stash)
+	{
+		i = 0;
+		while (stash->content[i])
+		{
+			if (stash->content[i] == '\n')
+			{
+				(*next_line)[j++] = stash->content[i];
+				break ;
+			}
+			(*next_line)[j++] = stash->content[i++];
+		}
+		stash = stash->next;
+	}
+	(*next_line)[j] = '\0';
+}
 
-	next_line = find_line(new_list);
-	// clear_list(&new_list);
-	return (next_line);
+// goes through the last node until its end or a '\n'
+// allocate memory for the node content of size remaining after \n
+// fill the node content with remaining text
+// free stash
+void	clean_stash(t_list **stash)
+{
+	t_list	*last;
+	int		i;
+
+	if (stash == NULL)
+		return ;
+	last = ft_last_node(*stash);
+	i = 0;
+	while (last->content[i] && last->content[i] != '\n')
+		i++;
+	if (last->content && last->content[i] == '\n')
+		i++;
+	ft_fill_last_node(stash, i, last);
 }
