@@ -28,17 +28,9 @@ char	*ft_strjoin(char *next_line, char *buf)
 	int		i;
 	int		j;
 
-	if (next_line == NULL)
-	{
-		next_line = malloc (sizeof(char) * 1);
-		if (next_line == NULL)
-			return (NULL);
-		next_line[0] = '\0';
-	}
 	str = malloc(sizeof(char) * (ft_strlen(next_line) + ft_strlen(buf) + 1));
 	if (str == NULL)
 	{
-		free(next_line);
 		return (NULL);
 	}
 	i = -1;
@@ -49,7 +41,6 @@ char	*ft_strjoin(char *next_line, char *buf)
 	while (buf[j])
 		str[i++] = buf[j++];
 	str[i] = '\0';
-	free(next_line);
 	return (str);
 }
 
@@ -75,4 +66,20 @@ void	ft_free(char *next_line, char *buf)
 	}
 	free(buf);
 	return ;
+}
+
+char	*ft_free_and_join(char *next_line, char *buf)
+{
+	char	*temp;
+
+	if (next_line == NULL)
+	{
+		next_line = malloc (sizeof(char) * 1);
+		if (next_line == NULL)
+			return (NULL);
+		next_line[0] = '\0';
+	}
+	temp = ft_strjoin(next_line, buf);
+	free(next_line);
+	return (temp);
 }

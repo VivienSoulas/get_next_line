@@ -84,7 +84,7 @@ char	*ft_read_and_copy(int fd, char *next_line)
 			return (NULL);
 		}
 		buf[bytesread] = '\0';
-		next_line = ft_strjoin(next_line, buf);
+		next_line = ft_free_and_join(next_line, buf);
 		if (next_line == NULL)
 		{
 			free(buf);
