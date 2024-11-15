@@ -44,22 +44,22 @@
 // 3. remove the char before '/n' et return the array with everything afterwards
 char	*get_next_line(int fd)
 {
-	static char	*next_line = NULL;
+	static char	*next_line [20000];
 	char		*line;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	next_line = ft_read_and_copy(fd, next_line);
-	if (next_line == NULL)
+	next_line[fd] = ft_read_and_copy(fd, next_line[fd]);
+	if (next_line[fd] == NULL)
 		return (NULL);
-	line = ft_get_line(next_line);
+	line = ft_get_line(next_line[fd]);
 	if (line == NULL)
 	{
-		free(next_line);
-		next_line = NULL;
+		free(next_line[fd]);
+		next_line[fd] = NULL;
 		return (NULL);
 	}
-	next_line = ft_new_next_line(next_line);
+	next_line[fd] = ft_new_next_line(next_line[fd]);
 	return (line);
 }
 
@@ -80,7 +80,7 @@ char	*ft_read_and_copy(int fd, char *next_line)
 		bytesread = read(fd, buf, BUFFER_SIZE);
 		if (bytesread == -1)
 		{
-			free(buf);
+			ft_free(next_line, buf);
 			return (NULL);
 		}
 		buf[bytesread] = '\0';

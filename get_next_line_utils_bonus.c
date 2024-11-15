@@ -64,3 +64,15 @@ int	ft_strlen(char *str)
 		i++;
 	return (i);
 }
+
+void	ft_free(char *next_line, char *buf)
+{
+	if (next_line)
+	{
+		free(next_line);
+		free(buf);
+		return ;
+	}
+	free(buf);
+	return ;
+}

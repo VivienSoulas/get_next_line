@@ -17,5 +17,6 @@ char	*ft_strjoin(char *next_line, char *buf);
 int		ft_strlen(char *str);
 char	*ft_get_line(char *next_line);
 char	*ft_new_next_line(char *next_line);
+void	ft_free(char *next_line, char *buf);
 
 #endif
