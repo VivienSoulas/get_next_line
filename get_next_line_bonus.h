@@ -6,7 +6,7 @@
 /*   By: vsoulas <vsoulas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/21 10:30:14 by vsoulas           #+#    #+#             */
-/*   Updated: 2024/11/21 10:56:43 by vsoulas          ###   ########.fr       */
+/*   Updated: 2024/11/21 14:36:34 by vsoulas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 # define GET_NEXT_LINE_BONUS_H
 
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 1000000
+#  define BUFFER_SIZE 10
 # endif
 
 # include <unistd.h>
@@ -29,7 +29,7 @@ char	*ft_strjoin(char *next_line, char *buf);
 int		ft_strlen(char *str);
 char	*ft_get_line(char *next_line);
 char	*ft_new_next_line(char *next_line);
-void	ft_free(char *next_line, char *buf);
 char	*ft_free_and_join(char *next_line, char *buf);
+void	free_static(char **next_line);
 
 #endif

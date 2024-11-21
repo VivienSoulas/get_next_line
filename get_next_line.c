@@ -6,7 +6,7 @@
 /*   By: vsoulas <vsoulas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/21 10:30:24 by vsoulas           #+#    #+#             */
-/*   Updated: 2024/11/21 11:29:04 by vsoulas          ###   ########.fr       */
+/*   Updated: 2024/11/21 14:28:26 by vsoulas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,11 @@ void	read_and_stash(t_list **stash, int fd)
 	{
 		buffer = malloc (sizeof(char) * (BUFFER_SIZE + 1));
 		if (buffer == NULL)
+		{
+			ft_free_stash(*stash);
+			stash = NULL;
 			return ;
+		}
 		bytesread = read (fd, buffer, BUFFER_SIZE);
 		if ((bytesread == 0) || bytesread < 0)
 		{

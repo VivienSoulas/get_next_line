@@ -6,7 +6,7 @@
 /*   By: vsoulas <vsoulas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/21 10:30:10 by vsoulas           #+#    #+#             */
-/*   Updated: 2024/11/21 11:25:31 by vsoulas          ###   ########.fr       */
+/*   Updated: 2024/11/21 14:38:37 by vsoulas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,14 +26,15 @@
 // 	i = 0;
 // 	// fd = open ("halloween.txt", O_RDONLY);
 // 	// fd1 = open ("fightclub.txt", O_RDONLY);
-// 	fd2 = open ("fearandloathinginlasvegas.txt", O_RDONLY);
+// 	//fd2 = open ("fearandloathinginlasvegas.txt", O_RDONLY);
+// 	fd2 = open ("test.txt", O_RDONLY);
 // 	if (/*fd < 0 || fd1 < 0 || */fd2 < 0)
 // 		return (1);
-// 	while (i < 14)
+// 	while (i < 5)
 // 	{
 // 		lineread = get_next_line(fd2);
 // 		printf("line %i from text 1 =\n", i);
-// 		printf("%s\n", lineread);
+// 		printf("|%s|\n", lineread);
 // 		free(lineread);
 // 		// lineread = get_next_line(fd1);
 // 		// printf("line %i from text 2 =\n", i);
@@ -61,11 +62,8 @@ char	*get_next_line(int fd)
 
 	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
 	{
-		if (next_line[fd])
-		{
-			free(next_line[fd]);
-			next_line[fd] = NULL;
-		}
+		if (next_line[fd] != NULL)
+			free_static(&next_line[fd]);
 		return (NULL);
 	}
 	next_line[fd] = ft_read_and_copy(fd, next_line[fd]);
@@ -74,8 +72,7 @@ char	*get_next_line(int fd)
 	line = ft_get_line(next_line[fd]);
 	if (line == NULL)
 	{
-		free(next_line[fd]);
-		next_line[fd] = NULL;
+		free_static(&next_line[fd]);
 		return (NULL);
 	}
 	next_line[fd] = ft_new_next_line(next_line[fd]);
@@ -92,15 +89,15 @@ char	*ft_read_and_copy(int fd, char *next_line)
 
 	buf = malloc (sizeof(char) * (BUFFER_SIZE + 1));
 	if (buf == NULL)
-		return (NULL);
+		return (free_static(&next_line), NULL);
 	bytesread = 1;
 	while (bytesread != 0 && !ft_strchr(next_line, '\n'))
 	{
 		bytesread = read(fd, buf, BUFFER_SIZE);
 		if (bytesread == -1)
 		{
-			ft_free(next_line, buf);
-			return (NULL);
+			free(buf);
+			return (free_static(&next_line), NULL);
 		}
 		buf[bytesread] = '\0';
 		next_line = ft_free_and_join(next_line, buf);
@@ -114,7 +111,7 @@ char	*ft_read_and_copy(int fd, char *next_line)
 	return (next_line);
 }
 
-// extract the line fron the array/string next_line including the '/n'
+// extract the line from the array/string next_line including the '/n'
 char	*ft_get_line(char *next_line)
 {
 	char	*line;
@@ -125,6 +122,8 @@ char	*ft_get_line(char *next_line)
 	i = 0;
 	while (next_line[i] != '\n' && next_line[i])
 		i++;
+	if (next_line[i] == '\0')
+		i--;
 	line = malloc (sizeof(char) * (i + 2));
 	if (line == NULL)
 		return (NULL);

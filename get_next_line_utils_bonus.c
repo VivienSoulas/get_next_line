@@ -6,7 +6,7 @@
 /*   By: vsoulas <vsoulas@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/21 10:30:17 by vsoulas           #+#    #+#             */
-/*   Updated: 2024/11/21 10:30:18 by vsoulas          ###   ########.fr       */
+/*   Updated: 2024/11/21 14:45:56 by vsoulas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,11 +29,6 @@ int	ft_strchr(char *s, int c)
 	return (0);
 }
 
-// modified strjoin
-// if next_line == null
-// malloc a pointer to '\0' to avoid concatinating to unallocated memory
-// if next_line exist, copy next_line in new array
-// copy buf in new array after next_line
 char	*ft_strjoin(char *next_line, char *buf)
 {
 	char	*str;
@@ -68,18 +63,6 @@ int	ft_strlen(char *str)
 	return (i);
 }
 
-void	ft_free(char *next_line, char *buf)
-{
-	if (next_line)
-	{
-		free(next_line);
-		free(buf);
-		return ;
-	}
-	free(buf);
-	return ;
-}
-
 char	*ft_free_and_join(char *next_line, char *buf)
 {
 	char	*temp;
@@ -94,4 +77,11 @@ char	*ft_free_and_join(char *next_line, char *buf)
 	temp = ft_strjoin(next_line, buf);
 	free(next_line);
 	return (temp);
+}
+
+void	free_static(char **next_line)
+{
+	if (*next_line != NULL)
+		free(*next_line);
+	*next_line = NULL;
 }
