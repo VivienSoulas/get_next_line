@@ -1,8 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line_bonus.h                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: vsoulas <vsoulas@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/21 10:30:14 by vsoulas           #+#    #+#             */
+/*   Updated: 2024/11/21 10:56:43 by vsoulas          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef GET_NEXT_LINE_BONUS_H
 # define GET_NEXT_LINE_BONUS_H
 
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 10
+#  define BUFFER_SIZE 1000000
 # endif
 
 # include <unistd.h>

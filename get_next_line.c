@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: vsoulas <vsoulas@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/21 10:30:24 by vsoulas           #+#    #+#             */
+/*   Updated: 2024/11/21 11:29:04 by vsoulas          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "get_next_line.h"
 
 // int	main(void)
@@ -6,7 +18,7 @@
 // 	char	*lineread;
 
 // 	fd = 0;
-// 	fd = open ("fearandloathinginlasvegas.txt", O_RDONLY);
+// 	fd = open ("test.txt", O_RDONLY);
 // 	if (fd < 0)
 // 		return (1);
 // 	// lineread = get_next_line(fd);
@@ -20,13 +32,32 @@
 // 	return (0);
 // }
 
+//int main(void)
+//{
+//	int fd = open("test.txt", O_RDONLY);
+
+//	printf("%s", get_next_line(fd));
+//	printf("%s", get_next_line(fd));
+//	close(fd);
+//	//printf("%s", get_next_line(fd));
+//	//fd = open("test.txt", O_RDONLY);
+//	//printf("new line \n");
+//	//printf("%s", get_next_line(fd));
+//	//printf("%s", get_next_line(fd));
+//	return (0);
+//}
+
 char	*get_next_line(int fd)
 {
 	static t_list	*stash = NULL;
 	char			*line;
 
-	if (fd < 0 || BUFFER_SIZE <= 0)
+	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
+	{
+		ft_free_stash(stash);
+		stash = NULL;
 		return (NULL);
+	}
 	line = NULL;
 	read_and_stash(&stash, fd);
 	if (stash == NULL)

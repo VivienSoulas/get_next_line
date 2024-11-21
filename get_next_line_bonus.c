@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: vsoulas <vsoulas@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/21 10:30:10 by vsoulas           #+#    #+#             */
+/*   Updated: 2024/11/21 11:25:31 by vsoulas          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "get_next_line_bonus.h"
 
 // int	main(void)
@@ -44,11 +56,18 @@
 // 3. remove the char before '/n' et return the array with everything afterwards
 char	*get_next_line(int fd)
 {
-	static char	*next_line [20000];
+	static char	*next_line [1024];
 	char		*line;
 
-	if (fd < 0 || BUFFER_SIZE <= 0)
+	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
+	{
+		if (next_line[fd])
+		{
+			free(next_line[fd]);
+			next_line[fd] = NULL;
+		}
 		return (NULL);
+	}
 	next_line[fd] = ft_read_and_copy(fd, next_line[fd]);
 	if (next_line[fd] == NULL)
 		return (NULL);
@@ -147,3 +166,18 @@ char	*ft_new_next_line(char *next_line)
 	free(next_line);
 	return (new_line);
 }
+
+//int main(void)
+//{
+//	int fd = open("test.txt", O_RDONLY);
+
+//	printf("%s", get_next_line(fd));
+//	printf("%s", get_next_line(fd));
+//	//close(fd);
+//	//printf("%s", get_next_line(fd));
+//	//fd = open("test.txt", O_RDONLY);
+//	//printf("new line \n");
+//	//printf("%s", get_next_line(fd));
+//	//printf("%s", get_next_line(fd));
+//	return (0);
+//}
